@@ -32,6 +32,10 @@ int main() {
     do {
         printMenu();
         std::cin >> menuChoice;
+        if(!(menuChoice >= 1 && menuChoice <= 5)){
+            std::cout << "Invalid input.\n";
+            exit(0);
+        }
         Line *line = new Line();
         Rectangle *rectangle = new Rectangle();
         Circle *circle = new Circle();
@@ -109,13 +113,25 @@ Line setLineVal(){
     std::cin >> x1 >> y1;
     l->setX1(x1);
     l->setY1(y1);
-    l->addToPointVector(x1, y1);
+    if(isdigit(x1) && isdigit(y1)){
+        l->addToPointVector(x1, y1);
+    }
+    else{
+        std::cout << "Invalid Input.\n";
+        exit(0);
+    }
 
     std::cout << "Enter the Second point (x, y): ";
     std::cin >> x2 >> y2;
     l->setX2(x2);
     l->setY2(y2);
-    l->addToPointVector(x2, y2);
+    if(isdigit(x2) && isdigit(y2)){
+        l->addToPointVector(x2, y2);
+    }
+    else{
+        std::cout << "Invalid Input.\n";
+        exit(0);
+    }
 
     l->calcLineSlope();
     l->calcLineDistance();
@@ -136,15 +152,33 @@ Rectangle setRectangleVal(){
 
     std::cout << "Enter the first point (x, y): ";
     std::cin >> x >> y;
-    r->setPoint1(x, y);
+    if(isdigit(x) && isdigit(y)){
+        r->setPoint1(x, y);
+    }
+    else{
+        std::cout << "Invalid Input.";
+        exit(0);
+    }
 
     std::cout << "Enter the width: ";
     std::cin >> width;
-    r->setWidth(width);
+    if(isdigit(width)){
+        r->setWidth(width);
+    }
+    else{
+        std::cout << "Invalid Input.";
+        exit(0);
+    }
 
     std::cout << "Enter the length: ";
     std::cin >> length;
-    r->setLength(length);
+    if(isdigit(length)){
+        r->setWidth(length);
+    }
+    else{
+        std::cout << "Invalid Input.";
+        exit(0);
+    }
 
     r->setPoint2(x, y + length);
     r->setPoint3(x + width, y);
@@ -173,7 +207,13 @@ Circle setCircleVal(){
 
     std::cout << "Enter radius: ";
     std::cin >> radius;
-    c->setRadius(radius);
+    if(isdigit(radius)){
+        c->setRadius(radius);
+    }
+    else{
+        std::cout << "Invalid Input.";
+        exit(0);
+    }
 
     c->calcCircleArea();
     c->calcCircleCircumference();
