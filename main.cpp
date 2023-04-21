@@ -4,6 +4,7 @@
 //Desc: main file for shapes project
 //---------------------------------------------------------
 #include <iostream>
+#include <memory>
 #include "shape.h"
 #include "point.h"
 #include "line.h"
@@ -13,15 +14,22 @@
 //Function Proto-Types
 //---------------------------------------------------------
 void printMenu();
-void printShapesList(std::vector<Shape*> shapes);
-Line setLineVal();
-Rectangle setRectangleVal();
-Circle setCircleVal();
+void printShapesList(std::vector<std::shared_ptr<Shape>> shapes);
+
+//setshape functions are now void and no longer return pointers
+void setLineVal(std::shared_ptr<Line> l);
+void setRectangleVal(std::shared_ptr<Rectangle> r);
+void setCircleVal(std::shared_ptr<Circle> c);
 
 //Function Definitions
 //---------------------------------------------------------
 int main() {
-    std::vector<Shape*>  shapes{};
+    
+    /*shapes is now a vector of smart pointers
+     * example of how to do this was from:
+     * https://stackoverflow.com/questions/28733385/c11-vector-of-smart-pointer
+     * by user: vsoftco */
+    std::vector<std::shared_ptr<Shape>> shapes{};
     bool Loop = true;
     int menuChoice;
 
@@ -36,29 +44,33 @@ int main() {
             std::cout << "Invalid input.\n";
             exit(0);
         }
-        Line *line = new Line();
-        Rectangle *rectangle = new Rectangle();
-        Circle *circle = new Circle();
+        
+       /* normal pointers were replaced with smart pointers from the
+         * <memory> library */
+
+        auto line = std::make_shared<Line>();
+        auto rectangle = std::make_shared<Rectangle>();
+        auto circle = std::make_shared<Circle>();
 
         switch(menuChoice) {
             case 1:
                 //calls function to set values for the shape
                 //and saves it to line pointer
-                *line = setLineVal();
+                setLineVal(line);
                 //adds shape to shape pointer vector
                 shapes.push_back(line);
                 break;
             case 2:
                 //calls function to set values for the shape
                 //and saves it to rectangle pointer
-                *rectangle = setRectangleVal();
+                setRectangleVal(rectangle);
                 //adds shape to shape pointer vector
                 shapes.push_back(rectangle);
                 break;
             case 3:
                 //calls function to set values for the shape
                 //and saves it to circle pointer
-                *circle = setCircleVal();
+                setCircleVal(circle);
                 //adds shape to shape pointer vector
                 shapes.push_back(circle);
                 break;
@@ -89,7 +101,7 @@ void printMenu(){
 }
 
 
-void printShapesList(std::vector<Shape*> shapes){
+void printShapesList(std::vector<std::shared_ptr<Shape>> shapes){
     std::cout << "Shapes: \n";
 
     //loop cycles through each shape pointer and prints
@@ -103,82 +115,117 @@ void printShapesList(std::vector<Shape*> shapes){
 
 /**
  * sets the point values for the line
- * @return pointer to line class object
  */
-Line setLineVal(){
+void setLineVal(std::shared_ptr<Line> l){
     int x1, y1, x2, y2;
-    Line *l = new Line();
 
-    std::cout << "Enter the first point (x, y): ";
-    std::cin >> x1 >> y1;
+    bool loop = true;
+
+    //loops if the input from user does not meet criteria which is that both x and y values have to be
+    //numbers between -100 and 100
+    while(loop){
+        std::cout << "Enter the first point (values between -100 and 100) \n";
+        std::cout << "Enter x: ";
+        std::cin >> x1;
+        std::cout << "Enter y: ";
+        std::cin >> y1;
+        //values are limited in size to avoid buffer issue
+        if((x1 >= -100 && x1 <= 100) && (y1 >= -100 && y1 <= 100)){
+            loop = false;
+        }
+        else{
+            std::cout << "\nInvalid Input.\n Please enter points that are between -100 and 100.";
+            loop = true;
+        }
+    }
     l->setX1(x1);
     l->setY1(y1);
-    if(isdigit(x1) && isdigit(y1)){
-        l->addToPointVector(x1, y1);
-    }
-    else{
-        std::cout << "Invalid Input.\n";
-        exit(0);
-    }
+    l->addToPointVector(x1, y1);
 
-    std::cout << "Enter the Second point (x, y): ";
-    std::cin >> x2 >> y2;
+    loop = true;
+    while(loop){
+        std::cout << "Enter the second point (values between -100 and 100) \n";
+        std::cout << "Enter x: ";
+        std::cin >> x2;
+        std::cout << "Enter y: ";
+        std::cin >> y2;
+        //values are limited in size to avoid buffer issue
+        if((x2 >= -100 && x2 <= 100) && (y2 >= -100 && y2 <= 100)){
+            loop = false;
+        }
+        else{
+            std::cout << "\nInvalid Input.\n Please enter points that are between -100 and 100.";
+            loop = true;
+        }
+    }
     l->setX2(x2);
     l->setY2(y2);
-    if(isdigit(x2) && isdigit(y2)){
-        l->addToPointVector(x2, y2);
-    }
-    else{
-        std::cout << "Invalid Input.\n";
-        exit(0);
-    }
+    l->addToPointVector(x2, y2);
 
     l->calcLineSlope();
     l->calcLineDistance();
     l->calcLineAngle();
     l->calcLineIntercept();
-    return *l;
 }
 
 
 /**
  * sets the values for the rectangle
- * @return pointer to rectangle class object
  */
-Rectangle setRectangleVal(){
+void setRectangleVal(std::shared_ptr<Rectangle> r){
     int x, y;
     float width, length;
-    Rectangle *r = new Rectangle();
+    bool loop = true;
 
-    std::cout << "Enter the first point (x, y): ";
-    std::cin >> x >> y;
-    if(isdigit(x) && isdigit(y)){
-        r->setPoint1(x, y);
+    //loops if the input from user does not meet criteria which is that both x and y values have to be
+    //numbers between -100 and 100
+    while(loop){
+        std::cout << "Enter the first point (values between -100 and 100) \n";
+        std::cout << "Enter x: ";
+        std::cin >> x;
+        std::cout << "Enter y: ";
+        std::cin >> y;
+        //values are limited in size to avoid buffer issue
+        if((x >= -100 && x <= 100) && (y >= -100 && y <= 100)){
+            loop = false;
+        }
+        else{
+            std::cout << "\nInvalid Input.\n Please enter points that are between -100 and 100.";
+            loop = true;
+        }
     }
-    else{
-        std::cout << "Invalid Input.";
-        exit(0);
-    }
+    r->setPoint1(x, y);
 
-    std::cout << "Enter the width: ";
-    std::cin >> width;
-    if(isdigit(width)){
-        r->setWidth(width);
+    loop = true;
+    while(loop){
+        std::cout << "Enter the width: ";
+        std::cin >> width;
+        //values are limited in size to avoid buffer issue
+        if(width >= 0 && width <= 100){
+            loop = false;
+        }
+        else{
+            std::cout << "\nInvalid Input.\n Please enter a value that is between 0 and 100.\n";
+            loop = true;
+        }
     }
-    else{
-        std::cout << "Invalid Input.";
-        exit(0);
-    }
+    r->setWidth(width);
 
-    std::cout << "Enter the length: ";
-    std::cin >> length;
-    if(isdigit(length)){
-        r->setWidth(length);
+
+    loop = true;
+    while(loop){
+        std::cout << "Enter the length: ";
+        std::cin >> length;
+        //values are limited in size to avoid buffer issue
+        if(length >= 0 && length <= 100){
+            loop = false;
+        }
+        else{
+            std::cout << "\nInvalid Input.\n Please enter a value that is between 0 and 100.\n";
+            loop = true;
+        }
     }
-    else{
-        std::cout << "Invalid Input.";
-        exit(0);
-    }
+    r->setLength(length);
 
     r->setPoint2(x, y + length);
     r->setPoint3(x + width, y);
@@ -186,37 +233,55 @@ Rectangle setRectangleVal(){
 
     r->calcRectangleArea();
     r->calcRectanglePerimeter();
-    return *r;
 }
 
 
 /**
  * sets the values for creating circle
  * center point, and radius
- * @return pointer to circle class object
  */
-Circle setCircleVal(){
+void setCircleVal(std::shared_ptr<Circle> c){
     int x, y;
     int radius;
-    Circle *c = new Circle;
 
-    std::cout << "Enter center point (x, y): ";
-    std::cin >> x >> y;
+    bool loop = true;
+
+    //loops if the input from user does not meet criteria which is that both x and y values have to be 
+    //numbers between -100 and 100
+    while(loop){
+        std::cout << "Enter the center point (values between -100 and 100) \n";
+        std::cout << "Enter x: ";
+        std::cin >> x;
+        std::cout << "Enter y: ";
+        std::cin >> y;
+        //values are limited in size to avoid buffer issue
+        if((x >= -100 && x <= 100) && (y >= -100 && y <= 100)){
+            loop = false;
+        }
+        else{
+            std::cout << "\nInvalid Input.\n Please enter points that are between -100 and 100.";
+            loop = true;
+        }
+    }
     c->setX(x);
     c->setY(y);
 
-    std::cout << "Enter radius: ";
-    std::cin >> radius;
-    if(isdigit(radius)){
-        c->setRadius(radius);
+    loop = true;
+    while(loop) {
+        std::cout << "Enter radius: ";
+        std::cin >> radius;
+        //values are limited in size to avoid buffer issue
+        if(radius >= 0 && radius <= 100){
+            loop = false;
+        }
+        else{
+            std::cout << "\nInvalid Input.\n Please enter a value that is between -0 and 100.";
+            loop = true;
+        }
     }
-    else{
-        std::cout << "Invalid Input.";
-        exit(0);
-    }
+    c->setRadius(radius);
 
     c->calcCircleArea();
     c->calcCircleCircumference();
     c->calcCircleDiameter();
-    return *c;
 }
