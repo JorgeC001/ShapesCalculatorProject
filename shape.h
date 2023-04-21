@@ -18,6 +18,7 @@ private:
 protected:
     std::vector<Point> points{};
 public:
+    ~Shape() = default;
     virtual std::string shapeToString();
 };
 #endif //SHAPESCALCULATOR_SHAPE_H
